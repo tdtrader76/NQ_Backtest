@@ -1,0 +1,2 @@
+ts_event,rtype,publisher_id,instrument_id,open,high,low,close,volume,symbol
+2020-12-28T23:01:00.000000000Z,33,1,7575,12830.000000000,12830.000000000,12830.000000000,12830.000000000,1,MNQH2

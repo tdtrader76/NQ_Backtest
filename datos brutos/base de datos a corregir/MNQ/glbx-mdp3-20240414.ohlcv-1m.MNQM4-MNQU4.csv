@@ -1,0 +1,2 @@
+ts_event,rtype,publisher_id,instrument_id,open,high,low,close,volume,symbol
+2024-04-14T22:58:00.000000000Z,33,1,59361,225.400000000,225.400000000,225.400000000,225.400000000,7,MNQM4-MNQU4

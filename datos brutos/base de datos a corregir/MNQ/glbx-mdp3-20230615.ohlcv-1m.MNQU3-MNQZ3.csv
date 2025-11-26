@@ -1,0 +1,2 @@
+ts_event,rtype,publisher_id,instrument_id,open,high,low,close,volume,symbol
+2023-06-15T06:01:00.000000000Z,33,1,47123,187.500000000,187.500000000,187.500000000,187.500000000,1,MNQU3-MNQZ3

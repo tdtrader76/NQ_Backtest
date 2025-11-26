@@ -1,0 +1,2 @@
+ts_event,rtype,publisher_id,instrument_id,open,high,low,close,volume,symbol
+2025-09-11T12:35:00.000000000Z,33,1,42016098,241.050000000,241.050000000,241.050000000,241.050000000,1,MNQZ5-MNQH6

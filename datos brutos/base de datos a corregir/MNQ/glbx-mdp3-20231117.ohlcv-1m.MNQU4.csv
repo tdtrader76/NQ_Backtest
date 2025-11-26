@@ -1,0 +1,2 @@
+ts_event,rtype,publisher_id,instrument_id,open,high,low,close,volume,symbol
+2023-11-17T19:09:00.000000000Z,33,1,13941,16500.000000000,16500.000000000,16500.000000000,16500.000000000,1,MNQU4

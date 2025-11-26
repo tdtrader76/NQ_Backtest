@@ -1,0 +1,2 @@
+ts_event,rtype,publisher_id,instrument_id,open,high,low,close,volume,symbol
+2022-09-30T20:56:00.000000000Z,33,1,9235,11370.000000000,11370.000000000,11370.000000000,11370.000000000,1,MNQU3

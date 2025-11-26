@@ -1,0 +1,2 @@
+ts_event,rtype,publisher_id,instrument_id,open,high,low,close,volume,symbol
+2021-03-17T18:42:00.000000000Z,33,1,68227,-11.650000000,-11.650000000,-11.650000000,-11.650000000,1,MNQM1-MNQU1

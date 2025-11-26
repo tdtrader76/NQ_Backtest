@@ -1,0 +1,2 @@
+ts_event,rtype,publisher_id,instrument_id,open,high,low,close,volume,symbol
+2020-12-14T13:11:00.000000000Z,33,1,3601,12421.000000000,12421.000000000,12421.000000000,12421.000000000,1,MNQU1

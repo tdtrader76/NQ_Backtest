@@ -1,0 +1,2 @@
+ts_event,rtype,publisher_id,instrument_id,open,high,low,close,volume,symbol
+2021-07-08T08:24:00.000000000Z,33,1,7688,14750.000000000,14750.000000000,14750.000000000,14750.000000000,1,MNQU2
