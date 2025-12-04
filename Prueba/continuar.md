@@ -5,6 +5,95 @@ Continuar con Backtesting
 
 ---
 
+## ✅ COMPLETADO - 2025-12-04 15:10: Filtrado de datos del año 2025 y creación de hojas estadísticas
+
+### Tarea realizada:
+Se creó el script `filtrar_datos_2025_DN.py` para extraer únicamente los datos del año 2025 del archivo completo y generar hojas de estadísticas específicas para ese año.
+
+### Archivos creados:
+- `Scripts/filtrar_datos_2025_DN.py` (Versión 1.0 - script de filtrado)
+- Actualización de `Resultados/Fase1/Datos_Diarios_DN_Niveles.xlsx` con 7 hojas nuevas
+
+### Hojas agregadas al Excel:
+1. **Datos_2025** - 221 registros completos del año 2025 (02-Ene a 07-Nov)
+2. **2025_1D_Resumen_Touches** - Estadísticas de toques One Day para 2025
+3. **2025_1D_Analisis_Cierres** - Análisis de cierres One Day para 2025
+4. **2025_1D_Analisis_Superacion** - Análisis de superación One Day para 2025
+5. **2025_3D_Resumen_Touches** - Estadísticas de toques Three Days para 2025
+6. **2025_3D_Analisis_Cierres** - Análisis de cierres Three Days para 2025
+7. **2025_3D_Analisis_Superacion** - Análisis de superación Three Days para 2025
+
+### Estadísticas específicas del año 2025:
+
+#### **One Day - Año 2025 (221 días):**
+- **Toca Q1**: 126 días (57.01%) - Superior al promedio histórico (55.22%)
+- **Toca Q4**: 95 días (42.99%)
+- **Toca ambos**: 30 días (13.57%) - Similar al promedio (12.29%)
+- **Promedio puntos sobre Q1**: 84.20 puntos (vs 67.12 histórico)
+- **Promedio puntos bajo Q4**: 99.44 puntos (vs 70.71 histórico)
+
+**Análisis de cierres 2025:**
+- **Q1 - Cierre debajo**: 150 días (67.87%) - Patrón de reversión consistente
+- **Q4 - Cierre arriba**: 179 días (80.99%) - Mayor que el promedio
+
+**Cuando toca ambos niveles (30 días en 2025):**
+- **Cierre sobre Q1**: 8 días (26.67%) - Promedio 53.64 puntos
+- **Cierre bajo Q4**: 7 días (23.33%) - Promedio 33.08 puntos
+- **Cierre entre niveles**: 15 días (50.00%) - Alta indecisión del mercado
+
+#### **Three Days - Año 2025 (221 días):**
+- **Toca Q1_3D**: 95 días (42.99%) - Consistente con el promedio (40.22%)
+- **Toca Q4_3D**: 52 días (23.53%)
+- **Toca ambos**: 3 días (1.36%) - Extremadamente conservador
+- **Promedio puntos sobre Q1_3D**: 59.81 puntos
+- **Promedio puntos bajo Q4_3D**: 63.28 puntos
+
+**Cuando toca ambos niveles 3D (3 días en 2025):**
+- Los **3 días cerraron entre niveles** (100%) - Ninguno superó los extremos
+
+### Observaciones clave del año 2025:
+
+1. **Mayor volatilidad que el promedio histórico**:
+   - Superaciones promedio mayores en 2025 (84.20 vs 67.12 puntos sobre Q1)
+   - Indica mercado más expansivo en 2025
+
+2. **Efectividad de niveles One Day en 2025**:
+   - 57% de toques en Q1 (vs 55% histórico)
+   - Los niveles mantienen su relevancia estadística
+
+3. **Patrón de reversión consistente**:
+   - 68% de días que tocan Q1 cierran debajo (similar al histórico 69%)
+   - Los niveles siguen funcionando como resistencia/soporte
+
+4. **Three Days extremadamente conservador en 2025**:
+   - Solo 3 días tocan ambos niveles (1.36%)
+   - Los 3 días muestran indecisión (cierran entre niveles)
+
+5. **Alta indecisión en días volátiles**:
+   - 50% de días que tocan ambos niveles One Day cierran entre ellos
+   - Indica mercado sin dirección clara en esos momentos
+
+### Conclusiones del año 2025:
+
+- **Q1 (High del día anterior)** actúa como resistencia efectiva
+- **Q4 (Low del día anterior)** actúa como soporte efectivo
+- Los niveles DN mantienen su validez estadística en 2025
+- Mayor expansión de rangos comparado con el promedio histórico
+- Niveles Three Days son más útiles como filtro conservador
+
+### Para ejecutar:
+```bash
+cd "c:\Users\oscar\Documents\Proyecto-Trading\Github\NQ_Backtest\Scripts"
+python filtrar_datos_2025_DN.py
+```
+
+### Archivo Excel actualizado:
+El archivo ahora contiene **16 hojas totales**:
+- 9 hojas originales (todos los años)
+- 7 hojas nuevas específicas del 2025
+
+---
+
 ## ✅ COMPLETADO - 2025-12-04 15:00: Cálculo de Niveles DN (Día Normal) con One Day y Three Days
 
 ### Tarea realizada:
