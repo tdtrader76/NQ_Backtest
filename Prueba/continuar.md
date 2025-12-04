@@ -1,5 +1,10 @@
 Continuar con Backtesting
 
+## Pendiente: 
+ - los niveles ya están calculados en el archivo @Proyecto-Trading/Github/NQ_Backtest/Prueba/Datos_2025_EM21_Niveles.xlsx conforme a este archivo @Proyecto-Trading/Pruebaniveles/calculosExpM.md y con varias hojas con estadísticas.  Ahora quiero usar @Proyecto-Trading/Github/NQ_Backtest/Resultados/Fase1/Datos_Diarios_por_Año.xlsx para calcular las mismas estadísticas, hojas y niveles que @Proyecto-Trading/Github/NQ_Backtest/Prueba/Datos_2025_EM21_Niveles.xlsx pero usando el archivo @Proyecto-Trading/Pruebaniveles/calculosDN.md. De momento solo quiero el año 2025 y luego ya extenderemos a otros años si se ha realizado correctamente. 
+- Comprobar manualmente estadísticas y archivos creados para el rango diario sin el expected move.
+
+
 ## ✅ COMPLETADO - 2025-12-04: Conversión de Datos de Minutos NinjaTrader a CSV
 
 ### Tarea realizada:
@@ -37,7 +42,7 @@ Usar `NQ_1min_2020-2025_Limpio.csv` en **Fase 3** del plan de backtesting para a
 
 ---
 
-## PENDIENTE: Continuar con tareas anteriores
+## Ya realizado: Continuar con tareas anteriores
 Veo que no existe un script llamado fase1_estad�sticas. D�jame buscar qu� scripts est�n disponibles en la carpeta Scripts:Perfecto, veo que el script 
 fase1_analisis_exploratorio.py ya existe y realiza an�lisis estad�sticos. Ahora d�jame ver el plan completo para entender mejor qu� necesitas:Bas�ndome en el c�digo que he visto, puedo ayudarte a crear un script de estad�sticas descriptivas. Veo que ya tienes fase1_analisis_exploratorio.py que hace an�lisis estad�sticos, pero puedo crear un script m�s espec�fico y completo. 
 �Qu� tipo de estad�sticas descriptivas necesitas espec�ficamente? Por ejemplo:
