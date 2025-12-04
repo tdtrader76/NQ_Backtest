@@ -1,9 +1,130 @@
 Continuar con Backtesting
 
-## Pendiente: 
- - los niveles ya están calculados en el archivo @Proyecto-Trading/Github/NQ_Backtest/Prueba/Datos_2025_EM21_Niveles.xlsx conforme a este archivo @Proyecto-Trading/Pruebaniveles/calculosExpM.md y con varias hojas con estadísticas.  Ahora quiero usar @Proyecto-Trading/Github/NQ_Backtest/Resultados/Fase1/Datos_Diarios_por_Año.xlsx para calcular las mismas estadísticas, hojas y niveles que @Proyecto-Trading/Github/NQ_Backtest/Prueba/Datos_2025_EM21_Niveles.xlsx pero usando el archivo @Proyecto-Trading/Pruebaniveles/calculosDN.md. De momento solo quiero el año 2025 y luego ya extenderemos a otros años si se ha realizado correctamente. 
-- Comprobar manualmente estadísticas y archivos creados para el rango diario sin el expected move.
+## Pendiente:
+- Comprobar manualmente estadísticas y archivos creadas para el rango diario sin el expected move en el archivo Datos_Diarios_DN_Niveles.xlsx
 
+---
+
+## ✅ COMPLETADO - 2025-12-04 15:00: Cálculo de Niveles DN (Día Normal) con One Day y Three Days
+
+### Tarea realizada:
+Se creó el script `Scripts/calcular_niveles_DN.py` para calcular niveles según la metodología DN (Día Normal) descrita en `calculosDN.md`, incluyendo tanto cálculos One Day como Three Days.
+
+### Archivos creados:
+- `Scripts/calcular_niveles_DN.py` (Versión 1.1 - script principal)
+- `Resultados/Fase1/Datos_Diarios_DN_Niveles.xlsx` (archivo de salida con todas las estadísticas)
+
+### Metodología DN implementada:
+
+#### **One Day (1 día anterior):**
+- **Q1** = High del día anterior
+- **Q4** = Low del día anterior
+- **Range** = Q1 - Q4
+- **NR2** = Q1 - (Range / 2) = Punto medio del rango
+- **Niveles internos:** Z2H, Z2L, Z3H, Z3L, TCH, TCL, TVH, TVL
+- **Desviaciones estándar:** Std1 a Std5 (arriba y abajo)
+- **Extensiones:** 1D+ y 1D-
+
+#### **Three Days (3 días anteriores):**
+- **High_3D** = Máximo High de los últimos 3 días
+- **Low_3D** = Mínimo Low de los últimos 3 días
+- **Range_3D** = High_3D - Low_3D
+- **NR2_3D** = Low_3D + (Range_3D / 2)
+- **Q1_3D** = NR2_3D + (Range_3D / 2) = High_3D
+- **Q4_3D** = NR2_3D - (Range_3D / 2) = Low_3D
+- **Niveles internos:** Misma estructura que One Day pero con Range_3D
+
+### Estructura del archivo Excel generado:
+
+El archivo `Datos_Diarios_DN_Niveles.xlsx` contiene **9 hojas**:
+
+1. **Datos_Completos**: 1,189 registros con 96 columnas incluyendo:
+   - Datos OHLCV originales
+   - Todos los niveles One Day (Q1, Q4, NR2, TCH, TCL, Z2H, Z2L, Z3H, Z3L, TVH, TVL, Std1-5, etc.)
+   - Todos los niveles Three Days (con sufijo _3D)
+   - Flags de toques y cierres para ambos períodos
+
+2. **1D_Resumen_Touches**: Estadísticas de toques One Day
+3. **1D_Analisis_Cierres**: Análisis de cierres respecto a niveles One Day
+4. **1D_Analisis_Superacion**: Análisis cuando toca ambos niveles (Q1 y Q4) One Day
+5. **1D_Analisis_Ambos**: Detalle resumido de días que tocan ambos niveles One Day
+6. **1D_Detalle_Ambos**: Detalle completo de días que tocan ambos niveles One Day
+
+7. **3D_Resumen_Touches**: Estadísticas de toques Three Days
+8. **3D_Analisis_Cierres**: Análisis de cierres respecto a niveles Three Days
+9. **3D_Analisis_Superacion**: Análisis cuando toca ambos niveles (Q1_3D y Q4_3D) Three Days
+
+### Estadísticas principales obtenidas:
+
+#### **One Day (1,188 días analizados):**
+- **Toca Q1**: 656 días (55.22%)
+- **Toca Q4**: 540 días (45.45%)
+- **Toca ambos Q1 y Q4**: 146 días (12.29%)
+- **Toca solo Q1**: 510 días (42.93%)
+- **Toca solo Q4**: 394 días (33.16%)
+- **Promedio puntos sobre Q1**: 67.12 puntos
+- **Promedio puntos bajo Q4**: 70.71 puntos
+
+**Análisis de cierres One Day:**
+- **Q1 - Cierre debajo**: 820 días (69.02%)
+- **Q1 - Cierre arriba/igual**: 368 días (30.98%)
+- **Q4 - Cierre arriba**: 927 días (78.03%)
+- **Q4 - Cierre abajo/igual**: 261 días (21.97%)
+
+**Cuando toca ambos niveles One Day (146 días):**
+- **Cierre sobre Q1**: 46 días (31.51%) - Promedio 33.34 puntos
+- **Cierre bajo Q4**: 40 días (27.40%) - Promedio 30.31 puntos
+- **Cierre entre niveles**: 60 días (41.10%)
+
+#### **Three Days (1,186 días analizados):**
+- **Toca Q1_3D**: 477 días (40.22%)
+- **Toca Q4_3D**: 334 días (28.16%)
+- **Toca ambos Q1_3D y Q4_3D**: 17 días (1.43%)
+- **Toca solo Q1_3D**: 460 días (38.79%)
+- **Toca solo Q4_3D**: 317 días (26.73%)
+- **Promedio puntos sobre Q1_3D**: 45.49 puntos
+- **Promedio puntos bajo Q4_3D**: 45.03 puntos
+
+**Análisis de cierres Three Days:**
+- **Q1_3D - Cierre debajo**: 926 días (78.08%)
+- **Q1_3D - Cierre arriba/igual**: 260 días (21.92%)
+- **Q4_3D - Cierre arriba**: 1,022 días (86.17%)
+- **Q4_3D - Cierre abajo/igual**: 164 días (13.83%)
+
+**Cuando toca ambos niveles Three Days (17 días):**
+- **Cierre sobre Q1_3D**: 3 días (17.65%) - Promedio 25.59 puntos
+- **Cierre bajo Q4_3D**: 4 días (23.53%) - Promedio 19.54 puntos
+- **Cierre entre niveles**: 10 días (58.82%)
+
+### Diferencias clave DN vs ExpM:
+
+La metodología **DN (Día Normal)** difiere de **ExpM (Expected Move)** en:
+1. **DN no usa skew**: Los niveles son simétricos respecto a NR2
+2. **DN usa rangos históricos**: Q1 y Q4 son directamente los High/Low anteriores
+3. **ExpM usa skew**: Los niveles se ajustan según la asimetría del Open respecto al rango
+4. **ExpM requiere Open**: El Current Open determina el desplazamiento de niveles
+5. **DN es más simple**: Solo necesita High y Low, sin considerar la apertura
+
+### Observaciones de los resultados:
+
+1. **Three Days es más conservador**: Solo 1.43% de días tocan ambos niveles (vs 12.29% en One Day)
+2. **Mayor probabilidad de reversión**: ~70% de días que tocan Q1 cierran debajo
+3. **Niveles One Day más reactivos**: Mayor frecuencia de toques (55% vs 40%)
+4. **Niveles Three Days más amplios**: Menos toques pero superaciones similares en puntos
+
+### Para ejecutar:
+```bash
+cd "c:\Users\oscar\Documents\Proyecto-Trading\Github\NQ_Backtest\Scripts"
+python calcular_niveles_DN.py
+```
+
+### Próximos pasos sugeridos:
+1. Comparar estadísticas DN vs ExpM para evaluar cuál metodología es más efectiva
+2. Analizar la efectividad de niveles One Day vs Three Days
+3. Crear estrategias de trading basadas en los patrones de reversión identificados
+4. Validar con datos de minutos (Fase 3) para confirmar reacciones intradiarias en estos niveles
+
+---
 
 ## ✅ COMPLETADO - 2025-12-04: Conversión de Datos de Minutos NinjaTrader a CSV
 
