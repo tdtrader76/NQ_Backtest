@@ -239,7 +239,7 @@ def detectar_gaps(df, reportar_log=True):
         logger.info("✅ No se detectaron gaps significativos")
 
     # Limpiar columna temporal del DataFrame original
-    df = df.drop(columns=['TimeDiff'])
+    df.drop(columns=['TimeDiff'], inplace=True)
 
     return gaps if len(gaps) > 0 else None
 
