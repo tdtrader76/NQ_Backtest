@@ -1,25 +1,35 @@
-# Versión 1.2 - 2025-12-06 16:45 - Corregidos cálculos de toques: TCH/TCL usan High, TVH/TVL usan Low
+# Versión 1.3 - 2025-12-07 - Corregido criterio "tocar": TCH/TCL vs Q1Y, TVH/TVL vs Q4Y
 
 """
 Script de Análisis de Niveles TCH/TCL y TVH/TVL - FASE 1
-Versión: 1.2
-Fecha: 2025-12-06
+Versión: 1.3
+Fecha: 2025-12-07
 Autor: Sistema Backtesting NASDAQ
 
 Descripción:
     Analiza en detalle los niveles TCH/TCL y TVH/TVL para determinar:
 
     Para TCH/TCL (niveles superiores):
-    - Toques de TCH y TCL (se comparan con HIGH)
+    - Toques de TCH y TCL (se comparan con Q1Y = High del día anterior)
+    - Toca TCL: TCL <= Q1Y
+    - Toca TCH: TCH <= Q1Y
     - Rupturas de TCH (High > TCH)
     - Toques de Q1 tras rotura
     - Vueltas a zona TCH-TCL tras rotura
 
     Para TVH/TVL (niveles inferiores):
-    - Toques de TVH y TVL (se comparan con LOW)
+    - Toques de TVH y TVL (se comparan con Q4Y = Low del día anterior)
+    - Toca TVH: TVH >= Q4Y
+    - Toca TVL: TVL >= Q4Y
     - Rupturas de TVL (Low < TVL)
     - Toques de Q4 tras rotura
     - Vueltas a zona TVL-TVH tras rotura
+
+    Nomenclatura:
+    - Q1Y = High del día anterior (High.shift(1))
+    - Q4Y = Low del día anterior (Low.shift(1))
+    - Q1Ex = Q1 = EMH (niveles EM21)
+    - Q4Ex = Q4 = EML (niveles EM21)
 
 Entrada:
     - Datos_2025_EM21_Niveles.xlsx (hoja 'Sheet1')
@@ -58,10 +68,10 @@ OUTPUT_FILE = Path("c:/Users/oscar/Documents/Proyecto-Trading/Github/NQ_Backtest
 
 def cargar_datos():
     """
-    Carga los datos del archivo Excel
+    Carga los datos del archivo Excel y crea columnas Q1Y y Q4Y
 
     Returns:
-        DataFrame con datos completos
+        DataFrame con datos completos incluyendo Q1Y (High día anterior) y Q4Y (Low día anterior)
     """
     logger.info("="*80)
     logger.info("CARGANDO DATOS")
@@ -77,6 +87,16 @@ def cargar_datos():
             df['Date'] = pd.to_datetime(df['Date'])
             logger.info(f"Período: {df['Date'].min()} a {df['Date'].max()}")
 
+        # Crear Q1Y y Q4Y (niveles del día anterior)
+        df['Q1Y'] = df['High'].shift(1)  # High del día anterior
+        df['Q4Y'] = df['Low'].shift(1)   # Low del día anterior
+
+        # Eliminar primera fila (NaN por shift)
+        registros_antes = len(df)
+        df = df.dropna(subset=['Q1Y', 'Q4Y'])
+        logger.info(f"Creadas columnas Q1Y y Q4Y (niveles día anterior)")
+        logger.info(f"Registros después de eliminar primera fila: {len(df)} (antes: {registros_antes})")
+
         return df
 
     except Exception as e:
@@ -87,10 +107,12 @@ def analizar_TCH_TCL(df):
     """
     Analiza niveles TCH/TCL con estadísticas detalladas
 
-    IMPORTANTE: TCH y TCL se tocan con el HIGH del día
+    IMPORTANTE: TCH y TCL se comparan con Q1Y (High del día anterior)
+    - Toca TCH: TCH <= Q1Y
+    - Toca TCL: TCL <= Q1Y
 
     Args:
-        df: DataFrame con datos completos
+        df: DataFrame con datos completos (debe incluir Q1Y)
 
     Returns:
         dict con estadísticas y DataFrame con detalles de rupturas
@@ -100,7 +122,7 @@ def analizar_TCH_TCL(df):
     logger.info("="*80)
 
     # Verificar columnas necesarias
-    required_cols = ['Date', 'Open', 'High', 'Low', 'Close', 'TCH', 'TCL', 'Q1']
+    required_cols = ['Date', 'Open', 'High', 'Low', 'Close', 'TCH', 'TCL', 'Q1', 'Q1Y']
     missing_cols = [col for col in required_cols if col not in df.columns]
     if missing_cols:
         logger.warning(f"Columnas faltantes: {missing_cols}")
@@ -108,9 +130,9 @@ def analizar_TCH_TCL(df):
     # Inicializar contadores
     stats = {}
 
-    # 1. Toques de TCH y TCL (ambos con HIGH)
-    toco_TCH = (df['High'] >= df['TCH']).sum()
-    toco_TCL = (df['High'] >= df['TCL']).sum()
+    # 1. Toques de TCH y TCL (comparados con Q1Y = High del día anterior)
+    toco_TCH = (df['TCH'] <= df['Q1Y']).sum()
+    toco_TCL = (df['TCL'] <= df['Q1Y']).sum()
 
     stats['total_dias'] = len(df)
     stats['toco_TCH'] = toco_TCH
@@ -119,9 +141,9 @@ def analizar_TCH_TCL(df):
     stats['toco_TCL_pct'] = toco_TCL / len(df) * 100
 
     # 2. Toques exclusivos y ambos
-    toco_solo_TCH = ((df['High'] >= df['TCH']) & (df['High'] < df['TCL'])).sum()
-    toco_solo_TCL = ((df['High'] >= df['TCL']) & (df['High'] < df['TCH'])).sum()
-    toco_ambos = ((df['High'] >= df['TCH']) & (df['High'] >= df['TCL'])).sum()
+    toco_solo_TCH = ((df['TCH'] <= df['Q1Y']) & (df['TCL'] > df['Q1Y'])).sum()
+    toco_solo_TCL = ((df['TCL'] <= df['Q1Y']) & (df['TCH'] > df['Q1Y'])).sum()
+    toco_ambos = ((df['TCH'] <= df['Q1Y']) & (df['TCL'] <= df['Q1Y'])).sum()
 
     stats['toco_solo_TCH'] = toco_solo_TCH
     stats['toco_solo_TCH_pct'] = toco_solo_TCH / len(df) * 100
@@ -187,8 +209,8 @@ def analizar_TCH_TCL(df):
     # Logging de resultados
     logger.info(f"\nEstadísticas TCH/TCL:")
     logger.info(f"  Total días analizados: {stats['total_dias']}")
-    logger.info(f"  Tocó TCH (High >= TCH): {stats['toco_TCH']} ({stats['toco_TCH_pct']:.1f}%)")
-    logger.info(f"  Tocó TCL (High >= TCL): {stats['toco_TCL']} ({stats['toco_TCL_pct']:.1f}%)")
+    logger.info(f"  Tocó TCH (TCH <= Q1Y): {stats['toco_TCH']} ({stats['toco_TCH_pct']:.1f}%)")
+    logger.info(f"  Tocó TCL (TCL <= Q1Y): {stats['toco_TCL']} ({stats['toco_TCL_pct']:.1f}%)")
     logger.info(f"  Tocó solo TCH: {stats['toco_solo_TCH']} ({stats['toco_solo_TCH_pct']:.1f}%)")
     logger.info(f"  Tocó solo TCL: {stats['toco_solo_TCL']} ({stats['toco_solo_TCL_pct']:.1f}%)")
     logger.info(f"  Tocó ambos: {stats['toco_ambos']} ({stats['toco_ambos_pct']:.1f}%)")
@@ -208,10 +230,12 @@ def analizar_TVH_TVL(df):
     """
     Analiza niveles TVH/TVL con estadísticas detalladas
 
-    IMPORTANTE: TVH y TVL se tocan con el LOW del día
+    IMPORTANTE: TVH y TVL se comparan con Q4Y (Low del día anterior)
+    - Toca TVH: TVH >= Q4Y
+    - Toca TVL: TVL >= Q4Y
 
     Args:
-        df: DataFrame con datos completos
+        df: DataFrame con datos completos (debe incluir Q4Y)
 
     Returns:
         dict con estadísticas y DataFrame con detalles de rupturas
@@ -221,7 +245,7 @@ def analizar_TVH_TVL(df):
     logger.info("="*80)
 
     # Verificar columnas necesarias
-    required_cols = ['Date', 'Open', 'High', 'Low', 'Close', 'TVH', 'TVL', 'Q4']
+    required_cols = ['Date', 'Open', 'High', 'Low', 'Close', 'TVH', 'TVL', 'Q4', 'Q4Y']
     missing_cols = [col for col in required_cols if col not in df.columns]
     if missing_cols:
         logger.warning(f"Columnas faltantes: {missing_cols}")
@@ -229,9 +253,9 @@ def analizar_TVH_TVL(df):
     # Inicializar contadores
     stats = {}
 
-    # 1. Toques de TVH y TVL (ambos con LOW)
-    toco_TVH = (df['Low'] <= df['TVH']).sum()
-    toco_TVL = (df['Low'] <= df['TVL']).sum()
+    # 1. Toques de TVH y TVL (comparados con Q4Y = Low del día anterior)
+    toco_TVH = (df['TVH'] >= df['Q4Y']).sum()
+    toco_TVL = (df['TVL'] >= df['Q4Y']).sum()
 
     stats['total_dias'] = len(df)
     stats['toco_TVH'] = toco_TVH
@@ -240,9 +264,9 @@ def analizar_TVH_TVL(df):
     stats['toco_TVL_pct'] = toco_TVL / len(df) * 100
 
     # 2. Toques exclusivos y ambos
-    toco_solo_TVH = ((df['Low'] <= df['TVH']) & (df['Low'] > df['TVL'])).sum()
-    toco_solo_TVL = ((df['Low'] <= df['TVL']) & (df['Low'] > df['TVH'])).sum()
-    toco_ambos = ((df['Low'] <= df['TVH']) & (df['Low'] <= df['TVL'])).sum()
+    toco_solo_TVH = ((df['TVH'] >= df['Q4Y']) & (df['TVL'] < df['Q4Y'])).sum()
+    toco_solo_TVL = ((df['TVL'] >= df['Q4Y']) & (df['TVH'] < df['Q4Y'])).sum()
+    toco_ambos = ((df['TVH'] >= df['Q4Y']) & (df['TVL'] >= df['Q4Y'])).sum()
 
     stats['toco_solo_TVH'] = toco_solo_TVH
     stats['toco_solo_TVH_pct'] = toco_solo_TVH / len(df) * 100
@@ -308,8 +332,8 @@ def analizar_TVH_TVL(df):
     # Logging de resultados
     logger.info(f"\nEstadísticas TVH/TVL:")
     logger.info(f"  Total días analizados: {stats['total_dias']}")
-    logger.info(f"  Tocó TVH (Low <= TVH): {stats['toco_TVH']} ({stats['toco_TVH_pct']:.1f}%)")
-    logger.info(f"  Tocó TVL (Low <= TVL): {stats['toco_TVL']} ({stats['toco_TVL_pct']:.1f}%)")
+    logger.info(f"  Tocó TVH (TVH >= Q4Y): {stats['toco_TVH']} ({stats['toco_TVH_pct']:.1f}%)")
+    logger.info(f"  Tocó TVL (TVL >= Q4Y): {stats['toco_TVL']} ({stats['toco_TVL_pct']:.1f}%)")
     logger.info(f"  Tocó solo TVH: {stats['toco_solo_TVH']} ({stats['toco_solo_TVH_pct']:.1f}%)")
     logger.info(f"  Tocó solo TVL: {stats['toco_solo_TVL']} ({stats['toco_solo_TVL_pct']:.1f}%)")
     logger.info(f"  Tocó ambos: {stats['toco_ambos']} ({stats['toco_ambos_pct']:.1f}%)")

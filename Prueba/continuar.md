@@ -2,19 +2,79 @@
 
 ## 📋 Estado del proyecto
 
-### Última actualización: 2025-12-06
+### Última actualización: 2025-12-07
 
 ---
 
 ## 🎯 Pendiente
 
-*Tareas actuales por realizar*
+### Para la próxima sesión:
+
+1. **Renombrar columnas en Excel**
+   - Archivo: `Resultados/Fase1/Datos_2025_EM21_Niveles_actualizado.xlsx`
+   - Cambiar columna I de "Q1" a "Q1Ex"
+   - Cambiar columna J de "Q4" a "Q4Ex"
+
+2. **Crear hojas de resumen comparativo**
+   - **Hoja 1**: Datos con niveles DN (del día anterior)
+     - Columnas: Date, Open, High, Low, Close, Volume, Range
+     - Niveles TCH, TCL, TVH, TVL calculados con High/Low del día anterior
+     - Origen: `Resultados/Fase1/2025.xlsx`
+
+   - **Hoja 2**: Datos con niveles EM21
+     - Columnas: Date, Open, High, Low, Close, Volume, Range
+     - Niveles TCH, TCL, TVH, TVL calculados con EMH/EML
+     - Origen: `Resultados/Fase1/Datos_2025_EM21_Niveles.xlsx`
+
+3. **Revisar criterio de "tocar"**
+   - Resultados actuales (v1.3):
+     - TCL: 79 días (35.9%)
+     - TVH: 97 días (44.1%)
+   - Resultados esperados por usuario:
+     - TCL: 118 días
+     - TVH: 137 días
+   - **ACCIÓN**: Clarificar con usuario el criterio exacto de "tocar"
 
 ---
 
 ## ✅ Completado recientemente
 
-### Sesión actual (2025-12-06):
+### Sesión actual (2025-12-07):
+
+**3. Análisis de niveles TCH/TCL y TVH/TVL (intentos de corrección)**
+- Script modificado: `Scripts/analizar_niveles_TC_TV.py` (v1.2 → v1.3)
+- Archivo generado: `Resultados/Fase1/Datos_2025_EM21_Niveles_actualizado.xlsx`
+- 220 registros analizados (221 - 1 por shift del día anterior)
+
+**Versión 1.2 (INCORRECTA - descartada):**
+- Comparaba TCH/TCL con High del día
+- Comparaba TVH/TVL con Low del día
+- Resultados: TCL=104, TVH=85
+
+**Versión 1.3 (implementada pero resultados no coinciden):**
+- Crea columnas Q1Y (High día anterior) y Q4Y (Low día anterior)
+- Compara TCH/TCL con Q1Y: `TCL <= Q1Y`, `TCH <= Q1Y`
+- Compara TVH/TVL con Q4Y: `TVH >= Q4Y`, `TVL >= Q4Y`
+- **Resultados obtenidos**:
+  - TCL tocado: 79 días (35.9%)
+  - TCH tocado: 71 días (32.3%)
+  - TVH tocado: 97 días (44.1%)
+  - TVL tocado: 89 días (40.5%)
+  - Rupturas TCH: 92 días (41.8%)
+  - Rupturas TVL: 73 días (33.2%)
+
+**Criterios probados sin éxito:**
+1. TCL <= Q1Y (High anterior): 79 días ❌
+2. TCL <= Q1 (EMH mismo día): 220 días ❌
+3. High >= TCL (precio toca TCL): 103 días ❌
+
+**Problema identificado:**
+- Ningún criterio produce los 118 días (TCL) y 137 días (TVH) esperados
+- Se requiere aclaración del usuario sobre el criterio exacto
+
+---
+
+### Sesión anterior (2025-12-06):
 
 **1. Comparación DN vs EM21 para el año 2025**
 - Archivo generado: `Resultados/Fase1/2025.xlsx`
@@ -107,6 +167,8 @@ Días que cumplen ambos criterios:
 
 - **Datos principales:**
   - `Resultados/Fase1/Datos_Diarios_DN_Niveles.xlsx` (histórico DN 2020-2025)
+  - `Resultados/Fase1/Datos_2025_EM21_Niveles.xlsx` (datos EM21 2025)
+  - `Resultados/Fase1/Datos_2025_EM21_Niveles_actualizado.xlsx` (análisis TC/TV - PENDIENTE REVISIÓN)
   - `Resultados/Fase1/2025.xlsx` (comparación DN vs EM21)
   - `Resultados/Fase1/2025_actualizado.xlsx` (con filtros de distancias mínimas)
 - **Scripts:**
@@ -114,6 +176,7 @@ Días que cumplen ambos criterios:
   - `Scripts/filtrar_datos_2025_DN.py` (v1.0)
   - `Scripts/comparar_niveles_DN_vs_EM21.py` (v1.0)
   - `Scripts/filtrar_distancias_minimas.py` (v1.0)
+  - `Scripts/analizar_niveles_TC_TV.py` (v1.3 - PENDIENTE REVISIÓN)
 - **Documentación anterior:** `Prueba/continuarold.md`
 
 ---
